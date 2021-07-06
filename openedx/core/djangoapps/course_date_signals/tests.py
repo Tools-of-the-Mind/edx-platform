@@ -129,10 +129,12 @@ class SelfPacedDueDatesTests(ModuleStoreTestCase):  # lint-amnesty, pylint: disa
             vertical1 = ItemFactory(parent=sequence, category='vertical')
             vertical2 = ItemFactory(parent=sequence, category='vertical')
             vertical3 = ItemFactory(parent=sequence, category='vertical')
-            expected_dates = [(sequence.location, {'due': timedelta(weeks=2)}),
-                            (vertical1.location, {'due': timedelta(weeks=2)}),
-                            (vertical2.location, {'due': timedelta(weeks=2)}),
-                            (vertical3.location, {'due': timedelta(weeks=2)})]
+            expected_dates = [
+                (sequence.location, {'due': timedelta(weeks=2)}),
+                (vertical1.location, {'due': timedelta(weeks=2)}),
+                (vertical2.location, {'due': timedelta(weeks=2)}),
+                (vertical3.location, {'due': timedelta(weeks=2)})
+            ]
             self.assertCountEqual(_get_custom_pacing_children(sequence, 2), expected_dates)
 
         # A subsection with multiple units, each of which has a problem
@@ -154,9 +156,11 @@ class SelfPacedDueDatesTests(ModuleStoreTestCase):  # lint-amnesty, pylint: disa
             sequence = modulestore().get_item(sequence.location)
             self.assertCountEqual(_get_custom_pacing_children(sequence, 2), expected_dates)
 
+
 @ddt.ddt
 class SelfPacedCustomDueDateTests(SharedModuleStoreTestCase):
 
+    # def setUp(self):
     def setUp(self):
         SelfPacedRelativeDatesConfig.objects.create(enabled=True)
 
@@ -169,27 +173,10 @@ class SelfPacedCustomDueDateTests(SharedModuleStoreTestCase):
             course1 = CourseFactory.create(self_paced=True)
             with self.store.bulk_operations(course1.id):
                 chapter = ItemFactory.create(category='chapter', parent=course1)
-                sequential = ItemFactory.create(category='sequential', parent=chapter, due_num_weeks=3)
+                ItemFactory.create(category='sequential', parent=chapter, due_num_weeks=3)
             self.courses.append(course1)
 
-            # course 2: with due_num_weeks and a unit
-            course2 = CourseFactory.create(self_paced=True)
-            with self.store.bulk_operations(course2.id):
-                chapter = ItemFactory.create(category='chapter', parent=course2)
-                sequential = ItemFactory.create(category='sequential', parent=chapter, due_num_weeks=2)
-                vertical = ItemFactory.create(category='vertical', parent=sequential)
-            self.courses.append(course2)
-
-            # course 3: with due_num_weeks and a problem
-            course3 = CourseFactory.create(self_paced=True)
-            with self.store.bulk_operations(course3.id):
-                chapter = ItemFactory.create(category='chapter', parent=course3)
-                sequential = ItemFactory.create(category='sequential', parent=chapter, due_num_weeks=1)
-                vertical = ItemFactory.create(category='vertical', parent=sequential)
-                ItemFactory.create(category='problem', parent=vertical)
-            self.courses.append(course3)
-
-            # course 4: with due_num_weeks on all sections
+            # course 2: with due_num_weeks on all sections
             course4 = CourseFactory.create(self_paced=True)
             with self.store.bulk_operations(course4.id):
                 chapter = ItemFactory.create(category='chapter', parent=course4)
@@ -198,7 +185,7 @@ class SelfPacedCustomDueDateTests(SharedModuleStoreTestCase):
                 sequential3 = ItemFactory.create(category='sequential', parent=chapter, due_num_weeks=4)
             self.courses.append(course4)
 
-            # course 5: without due_num_weeks on all sections
+            # course 3: without due_num_weeks on all sections
             course5 = CourseFactory.create(self_paced=True)
             with self.store.bulk_operations(course5.id):
                 chapter = ItemFactory.create(category='chapter', parent=course5)
@@ -207,35 +194,7 @@ class SelfPacedCustomDueDateTests(SharedModuleStoreTestCase):
                 sequential3 = ItemFactory.create(category='sequential', parent=chapter)
             self.courses.append(course5)
 
-            # course 6: due_num_weeks in one of the sections
-            course6 = CourseFactory.create(self_paced=True)
-            with self.store.bulk_operations(course6.id):
-                chapter = ItemFactory.create(category='chapter', parent=course6)
-                sequential1 = ItemFactory.create(category='sequential', parent=chapter)
-                sequential2 = ItemFactory.create(category='sequential', parent=chapter, due_num_weeks=1)
-                sequential3 = ItemFactory.create(category='sequential', parent=chapter)
-            self.courses.append(course6)
-
-            # course 7: a unit with an ORA problem
-            course7 = CourseFactory.create(self_paced=True)
-            with self.store.bulk_operations(course7.id):
-                chapter = ItemFactory.create(category='chapter', parent=course7)
-                sequential = ItemFactory.create(category='sequential', parent=chapter, due_num_weeks=1)
-                vertical = ItemFactory.create(category='vertical', parent=sequential)
-                ItemFactory.create(category='openassessment', parent=vertical)
-            self.courses.append(course7)
-
-            # course 8: a unit with an ORA problem and a nonORA problem
-            course8 = CourseFactory.create(self_paced=True)
-            with self.store.bulk_operations(course8.id):
-                chapter = ItemFactory.create(category='chapter', parent=course8)
-                sequential = ItemFactory.create(category='sequential', parent=chapter, due_num_weeks=2)
-                vertical = ItemFactory.create(category='vertical', parent=sequential)
-                ItemFactory.create(category='openassessment', parent=vertical)
-                ItemFactory.create(category='problem', parent=vertical)
-            self.courses.append(course8)
-
-            # course 9: a section with a subsection that has due_num_weeks and a section without due_num_weeks that has graded content
+            # course 4: a section with a subsection that has due_num_weeks and a section without due_num_weeks that has graded content
             course9 = CourseFactory.create(self_paced=True)
             with self.store.bulk_operations(course9.id):
                 chapter1 = ItemFactory.create(category='chapter', parent=course9)
@@ -249,7 +208,7 @@ class SelfPacedCustomDueDateTests(SharedModuleStoreTestCase):
                 ItemFactory.create(category='problem', parent=vertical2)
             self.courses.append(course9)
 
-            # course 10: a section with a subsection that has due_num_weeks and multiple sections without due_num_weeks that has graded content
+            # course 5: a section with a subsection that has due_num_weeks and multiple sections without due_num_weeks that has graded content
             course10 = CourseFactory.create(self_paced=True)
             with self.store.bulk_operations(course10.id):
                 chapter1 = ItemFactory.create(category='chapter', parent=course10)
@@ -284,94 +243,68 @@ class SelfPacedCustomDueDateTests(SharedModuleStoreTestCase):
         course = self.courses[0]
         chapter = course.get_children()[0]
         sequential = chapter.get_children()[0]
-        expected_dates = [(course.location, {}),
-                        (chapter.location, timedelta(days=28)),
-                        (sequential.location, {'due': timedelta(days=21)})]
+        expected_dates = [
+            (course.location, {}),
+            (chapter.location, timedelta(days=28)),
+            (sequential.location, {'due': timedelta(days=21)})
+        ]
         course = modulestore().get_item(course.location)
         self.assertCountEqual(extract_dates_from_course(course), expected_dates)
 
-        # course 2: with due_num_weeks and a unit
+        # with due_num_weeks and a unit
+        vertical = ItemFactory.create(category='vertical', parent=sequential)
+        expected_dates.append((vertical.location, {'due': timedelta(days=21)}))
+        course = modulestore().get_item(course.location)
+        self.assertCountEqual(extract_dates_from_course(course), expected_dates)
+
+        # with due_num_weeks and a problem
+        problem = ItemFactory.create(category='problem', parent=vertical)
+        expected_dates.append((problem.location, {'due': timedelta(days=21)}))
+        course = modulestore().get_item(course.location)
+        self.assertCountEqual(extract_dates_from_course(course), expected_dates)
+
+        # due_num_weeks in one of the sections
+        sequential2 = ItemFactory.create(category='sequential', parent=chapter)
+        sequential3 = ItemFactory.create(category='sequential', parent=chapter)
+        course = modulestore().get_item(course.location)
+        self.assertCountEqual(extract_dates_from_course(course), expected_dates)
+
+        # a unit with an ORA problem
+        sequential4 = ItemFactory.create(category='sequential', parent=chapter, due_num_weeks=1)
+        vertical4 = ItemFactory.create(category='vertical', parent=sequential4)
+        ItemFactory.create(category='openassessment', parent = vertical4)
+        expected_dates.extend([(sequential4.location, {'due': timedelta(days=7)}), (vertical4.location, {'due': timedelta(days=7)})])
+        course = modulestore().get_item(course.location)
+        self.assertCountEqual(extract_dates_from_course(course), expected_dates)
+
+        # a unit with an ORA problem and a nonORA problem
+        problem4 = ItemFactory.create(category='problem', parent = vertical4)
+        expected_dates.append((problem4.location, {'due': timedelta(days=7)}))
+        course = modulestore().get_item(course.location)
+        self.assertCountEqual(extract_dates_from_course(course), expected_dates)
+
+        # course 2: with due_num_weeks on all sections
         course = self.courses[1]
         chapter = course.get_children()[0]
-        sequential = chapter.get_children()[0]
-        vertical = sequential.get_children()[0]
-        expected_dates = [(course.location, {}),
-                        (chapter.location, timedelta(days=28)),
-                        (sequential.location, {'due': timedelta(days=14)}),
-                        (vertical.location, {'due': timedelta(days=14)})]
-        course = modulestore().get_item(course.location)
-        self.assertCountEqual(extract_dates_from_course(course), expected_dates)
-
-        # course 3: with due_num_weeks and a problem
-        course = self.courses[2]
-        chapter = course.get_children()[0]
-        sequential = chapter.get_children()[0]
-        vertical = sequential.get_children()[0]
-        problem = vertical.get_children()[0]
-        expected_dates = [(course.location, {}),
-                        (chapter.location, timedelta(days=28)),
-                        (sequential.location, {'due': timedelta(days=7)}),
-                        (vertical.location, {'due': timedelta(days=7)}),
-                        (problem.location, {'due': timedelta(days=7)})]
-        course = modulestore().get_item(course.location)
-        self.assertCountEqual(extract_dates_from_course(course), expected_dates)
-
-        # course 4: with due_num_weeks on all sections
-        course = self.courses[3]
-        chapter = course.get_children()[0]
         sequential = chapter.get_children()
-        expected_dates = [(course.location, {}),
-                        (chapter.location, timedelta(days=28)),
-                        (sequential[0].location, {'due': timedelta(days=7)}),
-                        (sequential[1].location, {'due': timedelta(days=21)}),
-                        (sequential[2].location, {'due': timedelta(days=28)})]
+        expected_dates = [
+            (course.location, {}),
+            (chapter.location, timedelta(days=28)),
+            (sequential[0].location, {'due': timedelta(days=7)}),
+            (sequential[1].location, {'due': timedelta(days=21)}),
+            (sequential[2].location, {'due': timedelta(days=28)})
+        ]
         course = modulestore().get_item(course.location)
         self.assertCountEqual(extract_dates_from_course(course), expected_dates)
 
-        # course 5: without due_num_weeks on all sections
-        course = self.courses[4]
+        # course 3: without due_num_weeks on all sections
+        course = self.courses[2]
         expected_dates = [(course.location, {})]
         course = modulestore().get_item(course.location)
         self.assertCountEqual(extract_dates_from_course(course), expected_dates)
 
-        # course 6: due_num_weeks in one of the sections
-        course = self.courses[5]
-        chapter = course.get_children()[0]
-        sequential = chapter.get_children()
-        expected_dates = [(course.location, {}),
-                        (chapter.location, timedelta(days=28)),
-                        (sequential[1].location, {'due': timedelta(days=7)})]
-        course = modulestore().get_item(course.location)
-        self.assertCountEqual(extract_dates_from_course(course), expected_dates)
-
-        # course 7: a unit with an ORA problem
-        course = self.courses[6]
-        chapter = course.get_children()[0]
-        sequential = chapter.get_children()[0]
-        vertical = sequential.get_children()[0]
-        expected_dates = [(course.location, {}),
-                        (chapter.location, timedelta(days=28)),
-                        (sequential.location, {'due': timedelta(days=7)}),
-                        (vertical.location, {'due': timedelta(days=7)})]
-        course = modulestore().get_item(course.location)
-        self.assertCountEqual(extract_dates_from_course(course), expected_dates)
-
-        # course 8: a unit with an ORA problem and a nonORA problem
-        course = self.courses[7]
-        chapter = course.get_children()[0]
-        sequential = chapter.get_children()[0]
-        vertical = sequential.get_children()[0]
-        problem = vertical.get_children()[1]
-        expected_dates = [(course.location, {}),
-                        (chapter.location, timedelta(days=28)),
-                        (sequential.location, {'due': timedelta(days=14)}),
-                        (vertical.location, {'due': timedelta(days=14)}),
-                        (problem.location, {'due': timedelta(days=14)})]
-        course = modulestore().get_item(course.location)
-        self.assertCountEqual(extract_dates_from_course(course), expected_dates)
-
-        # course 9: a section with a subsection that has due_num_weeks and a section without due_num_weeks that has graded content
-        course = self.courses[8]
+        # course 4: a section with a subsection that has due_num_weeks and a section without due_num_weeks that has graded content
+        course = self.courses[3]
         chapter1 = course.get_children()[0]
         sequential1 = chapter1.get_children()[0]
         vertical1 = sequential1.get_children()[0]
@@ -382,20 +315,22 @@ class SelfPacedCustomDueDateTests(SharedModuleStoreTestCase):
         vertical2 = sequential2.get_children()[0]
         problem2 = vertical2.get_children()[0]
 
-        expected_dates = [(course.location, {}),
-                        (chapter1.location, timedelta(days=14)),
-                        (sequential1.location, {'due': timedelta(days=14)}),
-                        (vertical1.location, {'due': timedelta(days=14)}),
-                        (problem1.location, {'due': timedelta(days=14)}),
-                        (chapter2.location, timedelta(days=28)),
-                        (sequential2.location, {'due': timedelta(days=28)}),
-                        (vertical2.location, {'due': timedelta(days=28)}),
-                        (problem2.location, {'due': timedelta(days=28)})]
+        expected_dates = [
+            (course.location, {}),
+            (chapter1.location, timedelta(days=14)),
+            (sequential1.location, {'due': timedelta(days=14)}),
+            (vertical1.location, {'due': timedelta(days=14)}),
+            (problem1.location, {'due': timedelta(days=14)}),
+            (chapter2.location, timedelta(days=28)),
+            (sequential2.location, {'due': timedelta(days=28)}),
+            (vertical2.location, {'due': timedelta(days=28)}),
+            (problem2.location, {'due': timedelta(days=28)})
+        ]
         course = modulestore().get_item(course.location)
         self.assertCountEqual(extract_dates_from_course(course), expected_dates)
 
-        # course 10:
-        course = self.courses[9]
+        # course 5: a section with a subsection that has due_num_weeks and multiple sections without due_num_weeks that has graded content
+        course = self.courses[4]
         chapter1 = course.get_children()[0]
         sequential1 = chapter1.get_children()[0]
         vertical1 = sequential1.get_children()[0]
@@ -416,23 +351,25 @@ class SelfPacedCustomDueDateTests(SharedModuleStoreTestCase):
         vertical4 = sequential4.get_children()[0]
         problem4 = vertical4.get_children()[0]
 
-        expected_dates = [(course.location, {}),
-                        (chapter1.location, timedelta(days=14)),
-                        (sequential1.location, {'due': timedelta(days=14)}),
-                        (vertical1.location, {'due': timedelta(days=14)}),
-                        (problem1.location, {'due': timedelta(days=14)}),
-                        (chapter2.location, timedelta(days=28)),
-                        (sequential2.location, {'due': timedelta(days=28)}),
-                        (vertical2.location, {'due': timedelta(days=28)}),
-                        (problem2.location, {'due': timedelta(days=28)}),
-                        (chapter3.location, timedelta(days=42)),
-                        (sequential3.location, {'due': timedelta(days=42)}),
-                        (vertical3.location, {'due': timedelta(days=42)}),
-                        (problem3.location, {'due': timedelta(days=42)}),
-                        (chapter4.location, timedelta(days=56)),
-                        (sequential4.location, {'due': timedelta(days=56)}),
-                        (vertical4.location, {'due': timedelta(days=56)}),
-                        (problem4.location, {'due': timedelta(days=56)})]
+        expected_dates = [
+            (course.location, {}),
+            (chapter1.location, timedelta(days=14)),
+            (sequential1.location, {'due': timedelta(days=14)}),
+            (vertical1.location, {'due': timedelta(days=14)}),
+            (problem1.location, {'due': timedelta(days=14)}),
+            (chapter2.location, timedelta(days=28)),
+            (sequential2.location, {'due': timedelta(days=28)}),
+            (vertical2.location, {'due': timedelta(days=28)}),
+            (problem2.location, {'due': timedelta(days=28)}),
+            (chapter3.location, timedelta(days=42)),
+            (sequential3.location, {'due': timedelta(days=42)}),
+            (vertical3.location, {'due': timedelta(days=42)}),
+            (problem3.location, {'due': timedelta(days=42)}),
+            (chapter4.location, timedelta(days=56)),
+            (sequential4.location, {'due': timedelta(days=56)}),
+            (vertical4.location, {'due': timedelta(days=56)}),
+            (problem4.location, {'due': timedelta(days=56)})
+        ]
         course = modulestore().get_item(course.location)
         with patch.object(utils, 'get_expected_duration', return_value=timedelta(weeks=8)):
             actual = extract_dates_from_course(course)
