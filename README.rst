@@ -1,3 +1,11 @@
+lms.stage.toolsofthemind.org
+------------------------
+.. image:: https://img.shields.io/badge/hack.d-Lawrence%20McDaniel-orange.svg
+     :target: https://lawrencemcdaniel.com
+     :alt: Hack.d Lawrence McDaniel
+
+This is the edx-platform fork for the Open edX platform `lms.stage.toolsofthemind.org <https://lms.stage.toolsofthemind.org>`_. 
+
 This is the core repository of the Open edX software. It includes the LMS
 (student-facing, delivering courseware), and Studio (course authoring)
 components.
