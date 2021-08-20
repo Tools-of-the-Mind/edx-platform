@@ -250,5 +250,8 @@ xblock==1.4.0             # via -r requirements/edx/base.in, acid-xblock, crowds
 xmlsec==1.3.9             # via python3-saml
 xss-utils==0.2.0          # via -r requirements/edx/base.in
 
+# toolsofthemind.org specific:
+openedx-scorm-xblock
+
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
