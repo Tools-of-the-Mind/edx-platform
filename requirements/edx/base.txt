@@ -255,3 +255,6 @@ openedx-scorm-xblock
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
+
+# mcdaniel nov-2021
+python-jose>=3.0.0
